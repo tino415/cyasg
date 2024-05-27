@@ -1,6 +1,5 @@
 defmodule Cyasg.Accounts.User do
-  use Ecto.Schema
-  import Ecto.Changeset
+  use Cyasg.Schema
 
   schema "users" do
     field :email, :string

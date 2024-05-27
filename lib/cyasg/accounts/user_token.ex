@@ -1,6 +1,9 @@
 defmodule Cyasg.Accounts.UserToken do
   use Ecto.Schema
+
   import Ecto.Query
+
+  alias Cyasg.Accounts.User
   alias Cyasg.Accounts.UserToken
 
   @hash_algorithm :sha256
@@ -17,7 +20,7 @@ defmodule Cyasg.Accounts.UserToken do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
-    belongs_to :user, Cyasg.Accounts.User
+    belongs_to :user, User, type: :binary_id
 
     timestamps(updated_at: false)
   end
