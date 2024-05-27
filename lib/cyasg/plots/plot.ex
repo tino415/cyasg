@@ -8,7 +8,7 @@ defmodule Cyasg.Plots.Plot do
     field :dataset, :string
     field :expression, :string
 
-    belongs_to :user, User
+    belongs_to :user, User, type: :binary_id
 
     timestamps(type: :utc_datetime)
   end

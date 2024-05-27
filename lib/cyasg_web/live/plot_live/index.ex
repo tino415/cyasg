@@ -6,7 +6,8 @@ defmodule CyasgWeb.PlotLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :plots, Plots.list_plots())}
+    user_id = socket.assigns.current_user.id
+    {:ok, stream(socket, :plots, Plots.list_user_plots(user_id))}
   end
 
   @impl true
@@ -15,9 +16,11 @@ defmodule CyasgWeb.PlotLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+    user_id = socket.assigns.current_user.id
+
     socket
     |> assign(:page_title, "Edit Plot")
-    |> assign(:plot, Plots.get_plot!(id))
+    |> assign(:plot, Plots.get_user_plot!(user_id, id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,8 +42,10 @@ defmodule CyasgWeb.PlotLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    plot = Plots.get_plot!(id)
-    {:ok, _} = Plots.delete_plot(plot)
+    user_id = socket.assigns.current_user.id
+    plot = Plots.get_user_plot!(user_id, id)
+
+    {:ok, _} = Plots.delete_user_plot(user_id, plot)
 
     {:noreply, stream_delete(socket, :plots, plot)}
   end

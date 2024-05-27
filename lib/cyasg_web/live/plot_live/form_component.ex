@@ -55,7 +55,9 @@ defmodule CyasgWeb.PlotLive.FormComponent do
   end
 
   defp save_plot(socket, :edit, plot_params) do
-    case Plots.update_plot(socket.assigns.plot, plot_params) do
+    user_id = socket.assigns.current_user.id
+
+    case Plots.update_user_plot(user_id, socket.assigns.plot, plot_params) do
       {:ok, plot} ->
         notify_parent({:saved, plot})
 
@@ -70,7 +72,9 @@ defmodule CyasgWeb.PlotLive.FormComponent do
   end
 
   defp save_plot(socket, :new, plot_params) do
-    case Plots.create_plot(plot_params) do
+    user_id = socket.assigns.current_user.id
+
+    case Plots.create_user_plot(user_id, plot_params) do
       {:ok, plot} ->
         notify_parent({:saved, plot})
 
