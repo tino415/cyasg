@@ -14,6 +14,14 @@
   <:item title="Expression"><%= @plot.expression %></:item>
 </.list>
 
+<div id="plot" phx-hook="Plotly" data-plotly={Jason.encode!([
+     %{
+       "x" => Enum.into(@datapoints, []),
+       "type" => "histogram"
+      }
+     ])}>
+</div>
+
 <.back navigate={~p"/plots"}>Back to plots</.back>
 
 <.modal :if={@live_action == :edit} id="plot-modal" show on_cancel={JS.patch(~p"/plots/#{@plot}")}>
@@ -24,5 +32,6 @@
     action={@live_action}
     plot={@plot}
     patch={~p"/plots/#{@plot}"}
+    current_user={@current_user}
   />
 </.modal>

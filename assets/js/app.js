@@ -22,15 +22,30 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Alpine from "alpinejs";
+import * as Plotly from "plotly.js/dist/plotly-basic";
 
 window.Alpine = Alpine
 Alpine.start()
 
+window.Plotly = Plotly
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+
+const Hooks = {
+  Plotly: {
+    mounted() {
+      Plotly.newPlot(this.el, JSON.parse(this.el.dataset.plotly))
+    },
+    updated() {
+      Plotly.newPlot(this.el, JSON.parse(this.el.dataset.plotly))
+    }
+  }
+}
 
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
+  hooks: Hooks,
   dom: {
     onBeforeElUpdated(from, to) {
       if (from._x_dataStack) {

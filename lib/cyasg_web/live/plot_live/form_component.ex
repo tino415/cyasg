@@ -1,6 +1,7 @@
 defmodule CyasgWeb.PlotLive.FormComponent do
   use CyasgWeb, :live_component
 
+  alias Cyasg.Datasets
   alias Cyasg.Plots
 
   @impl true
@@ -20,18 +21,28 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:dataset]} type="text" label="Dataset" />
-        <.input field={@form[:expression]} type="text" label="Expression" />
+        <.input field={@form[:dataset]} type="select" label="Dataset" options={Datasets.list()} />
+        <.input field={@form[:expression]} type="select" label="Expression" options={@columns} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Plot</.button>
         </:actions>
       </.simple_form>
+
+      <div id="plot" phx-update="ignore" phx-hook="Plotly" data-plotly={Jason.encode!([
+        %{
+          "x" => Enum.into(@datapoints, []),
+          "type" => "histogram"
+         }
+        ])}>
+      </div>
+
     </div>
     """
   end
 
   @impl true
   def update(%{plot: plot} = assigns, socket) do
+    IO.inspect(assigns, label: "assigns")
     changeset = Plots.change_plot(plot)
 
     {:ok,
@@ -89,7 +100,18 @@ defmodule CyasgWeb.PlotLive.FormComponent do
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
+    datasets = Datasets.list()
+
+    dataset = Ecto.Changeset.get_field(changeset, :dataset) || List.first(datasets)
+    columns = Datasets.columns(dataset)
+    column = Ecto.Changeset.get_field(changeset, :expression) || List.first(columns)
+    column = if column not in columns, do: List.first(columns), else: column
+    datapoints = Datasets.column(dataset, column)
+
+    socket
+    |> assign(:form, to_form(changeset))
+    |> assign(:columns, columns)
+    |> assign(:datapoints, datapoints)
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
