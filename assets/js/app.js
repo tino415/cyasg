@@ -37,7 +37,14 @@ const Hooks = {
       Plotly.newPlot(this.el, JSON.parse(this.el.dataset.plotly))
     },
     updated() {
-      Plotly.newPlot(this.el, JSON.parse(this.el.dataset.plotly))
+      const prerender = JSON.parse(this.el.dataset.prerender || "false")
+      const plot = Plotly.newPlot(this.el, JSON.parse(this.el.dataset.plotly))
+
+      if (prerender) {
+        plot
+          .then((gd) => Plotly.toImage(gd, {height: 300, width: 300}))
+          .then((url) => this.pushEventTo(prerender, "image-src", url))
+      }
     }
   }
 }

@@ -28,7 +28,11 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         </:actions>
       </.simple_form>
 
-      <div id="plot" phx-update="ignore" phx-hook="Plotly" data-plotly={Jason.encode!([
+      <div id="plot"
+        phx-update="ignore"
+        phx-hook="Plotly"
+        data-prerender={@myself}
+        data-plotly={Jason.encode!([
         %{
           "x" => Enum.into(@datapoints, []),
           "type" => "histogram"
@@ -42,7 +46,6 @@ defmodule CyasgWeb.PlotLive.FormComponent do
 
   @impl true
   def update(%{plot: plot} = assigns, socket) do
-    IO.inspect(assigns, label: "assigns")
     changeset = Plots.change_plot(plot)
 
     {:ok,
@@ -65,8 +68,16 @@ defmodule CyasgWeb.PlotLive.FormComponent do
     save_plot(socket, socket.assigns.action, plot_params)
   end
 
+  def handle_event("image-src", src, socket) do
+    IO.inspect(src, label: "prerendered image")
+    # FIXME: user could push save sooner than prerendering finishes
+    # but it is not as straight forward to do this
+    {:noreply, assign(socket, :prerendered_image, src)}
+  end
+
   defp save_plot(socket, :edit, plot_params) do
     user_id = socket.assigns.current_user.id
+    plot_params = Map.put(plot_params, "prerendered_image", socket.assigns.prerendered_image)
 
     case Plots.update_user_plot(user_id, socket.assigns.plot, plot_params) do
       {:ok, plot} ->
@@ -84,6 +95,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
 
   defp save_plot(socket, :new, plot_params) do
     user_id = socket.assigns.current_user.id
+    plot_params = Map.put(plot_params, "prerendered_image", socket.assigns.prerendered_image)
 
     case Plots.create_user_plot(user_id, plot_params) do
       {:ok, plot} ->
@@ -95,6 +107,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset.errors, label: "error")
         {:noreply, assign_form(socket, changeset)}
     end
   end
