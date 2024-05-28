@@ -18,27 +18,28 @@ defmodule Cyasg.Expressions do
   end
 
   def evaluate!(expression, columns, row) do
-    with {:ok, tags} <- parse(expression, columns) do
-      {result, _operator} =
-        Enum.reduce(tags, {Decimal.new(0), "+"}, fn
-          {:column, [column]}, {sum, "+" = o} ->
-            {Decimal.add(sum, get_column_value!(column, columns, row)), o}
+    case parse(expression, columns) do
+      {:ok, tags} ->
+        {result, _operator} =
+          Enum.reduce(tags, {Decimal.new(0), "+"}, fn
+            {:column, [column]}, {sum, "+" = o} ->
+              {Decimal.add(sum, get_column_value!(column, columns, row)), o}
 
-          {:column, [column]}, {sum, "-" = o} ->
-            {Decimal.sub(sum, get_column_value!(column, columns, row)), o}
+            {:column, [column]}, {sum, "-" = o} ->
+              {Decimal.sub(sum, get_column_value!(column, columns, row)), o}
 
-          {:column, [column]}, {sum, "*" = o} ->
-            {Decimal.mult(sum, get_column_value!(column, columns, row)), o}
+            {:column, [column]}, {sum, "*" = o} ->
+              {Decimal.mult(sum, get_column_value!(column, columns, row)), o}
 
-          {:column, [column]}, {sum, "/" = o} ->
-            {Decimal.div(sum, get_column_value!(column, columns, row)), o}
+            {:column, [column]}, {sum, "/" = o} ->
+              {Decimal.div(sum, get_column_value!(column, columns, row)), o}
 
-          {:operator, [operator]}, {sum, _} ->
-            {sum, operator}
-        end)
+            {:operator, [operator]}, {sum, _} ->
+              {sum, operator}
+          end)
 
-      result
-    else
+        result
+
       {:error, messages} ->
         raise "Unable to evaluate #{inspect(messages)}"
     end
@@ -61,10 +62,10 @@ defmodule Cyasg.Expressions do
   end
 
   defp check_tag_semantics(columns, {:column, [name]}, errors) do
-    if name not in columns do
-      ["Unknown column #{name}" | errors]
-    else
+    if name in columns do
       errors
+    else
+      ["Unknown column #{name}" | errors]
     end
   end
 

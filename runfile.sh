@@ -9,7 +9,7 @@ function dev() {
 }
 
 function check() {
-	mix compile --force && mix format
+	mix format && mix compile --force --warnings-as-errors && mix dialyzer && mix credo
 }
 
 function format() {
