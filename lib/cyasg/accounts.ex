@@ -3,8 +3,19 @@ defmodule Cyasg.Accounts do
 
   alias Cyasg.Accounts.{User, UserToken, UserNotifier}
 
-  def list_other_users(user_id) do
-    from(u in User, where: u.id != ^user_id)
+  def list_sharing_users_options(user_id, plot_id) do
+    already_shared_query =
+      from(u in User,
+        inner_join: s in assoc(u, :sharings),
+        where: s.plot_id == ^plot_id,
+        select: u.id
+      )
+
+    from(
+      u in User,
+      where: u.id != ^user_id,
+      where: u.id not in subquery(already_shared_query),
+      select: {u.email, u.id})
     |> Repo.all()
   end
 

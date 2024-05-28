@@ -1,11 +1,15 @@
 defmodule Cyasg.Accounts.User do
   use Cyasg.Schema
 
+  alias Cyasg.Sharings.Sharing
+
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+
+    has_many :sharings, Sharing
 
     timestamps(type: :utc_datetime)
   end

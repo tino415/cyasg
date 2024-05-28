@@ -21,7 +21,7 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:user_id]} type="select" label="User" options={user_options(@current_user)} />
+        <.input field={@form[:user_id]} type="select" label="User" options={@user_options} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Sharing</.button>
         </:actions>
@@ -52,6 +52,7 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
      socket
      |> stream(:sharings, Sharings.list_plot_sharings(assigns.plot.id))
      |> assign(assigns)
+     |> assign_user_options()
      |> setup()}
   end
 
@@ -70,6 +71,7 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
       {:ok, sharing} ->
         {:noreply,
          socket
+         |> assign_user_options()
          |> stream_insert(:sharings, sharing)
          |> put_flash(:info, "Sharing created successfully")
          |> setup()}
@@ -83,6 +85,8 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
     sharing = Sharings.get_sharing!(id)
     {:ok, _} = Sharings.delete_sharing(sharing)
 
+    socket = assign_user_options(socket)
+
     {:noreply, stream_delete(socket, :sharings, sharing)}
   end
 
@@ -90,11 +94,15 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
-
-  defp user_options(current_user) do
-    Accounts.list_other_users(current_user.id)
-    |> Enum.map(& {&1.email, &1.id})
+  defp assign_user_options(socket) do
+    assign(
+      socket,
+      :user_options,
+      Accounts.list_sharing_users_options(
+        socket.assigns.current_user.id,
+        socket.assigns.plot.id
+      )
+    )
   end
 
   defp setup(socket) do
