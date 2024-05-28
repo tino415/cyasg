@@ -26,20 +26,33 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
           <.button phx-disable-with="Saving...">Save Sharing</.button>
         </:actions>
       </.simple_form>
+
+      <.table
+        id="sharings"
+        rows={@streams.sharings}
+      >
+        <:col :let={{_id, sharing}} label="User"><%= sharing.user.email %></:col>
+        <:action :let={{id, sharing}}>
+          <.link
+            phx-click={JS.push("delete", value: %{id: sharing.id}) |> hide("##{id}")}
+            phx-target={@myself}
+            data-confirm="Are you sure?"
+          >
+            Delete
+          </.link>
+        </:action>
+      </.table>
     </div>
     """
   end
 
   @impl true
   def update(assigns, socket) do
-    sharing = %Sharing{}
-    changeset = Sharings.change_sharing(sharing)
-
     {:ok,
      socket
-     |> assign(:sharing, sharing)
+     |> stream(:sharings, Sharings.list_plot_sharings(assigns.plot.id))
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> setup()}
   end
 
   @impl true
@@ -53,18 +66,24 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
   end
 
   def handle_event("save", %{"sharing" => sharing_params}, socket) do
-    case Sharings.create_sharing(socket.assigns.plot, sharing_params) do
+    case Sharings.create_plot_sharing(socket.assigns.plot, sharing_params) do
       {:ok, sharing} ->
-        notify_parent({:saved, sharing})
-
         {:noreply,
          socket
+         |> stream_insert(:sharings, sharing)
          |> put_flash(:info, "Sharing created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+         |> setup()}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    sharing = Sharings.get_sharing!(id)
+    {:ok, _} = Sharings.delete_sharing(sharing)
+
+    {:noreply, stream_delete(socket, :sharings, sharing)}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
@@ -76,5 +95,14 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
   defp user_options(current_user) do
     Accounts.list_other_users(current_user.id)
     |> Enum.map(& {&1.email, &1.id})
+  end
+
+  defp setup(socket) do
+    sharing = %Sharing{}
+    changeset = Sharings.change_sharing(sharing)
+
+    socket
+    |> assign(:sharing, %Sharing{})
+    |> assign_form(changeset)
   end
 end
