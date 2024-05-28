@@ -40,6 +40,7 @@ const Hooks = {
       const prerender = JSON.parse(this.el.dataset.prerender || "false")
       const plot = Plotly.newPlot(this.el, JSON.parse(this.el.dataset.plotly))
 
+      // TODO: save image of plot and then on show or list render that version
       if (prerender) {
         plot
           .then((gd) => Plotly.toImage(gd, {height: 300, width: 300}))
