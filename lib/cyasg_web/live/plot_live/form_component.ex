@@ -58,6 +58,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
      socket
      |> assign(:datasets, Datasets.list())
      |> assign(assigns)
+     |> assign(:prerendered_image, plot.prerendered_image)
      |> assign_form(changeset)}
   end
 
