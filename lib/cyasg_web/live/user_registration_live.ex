@@ -5,6 +5,7 @@ defmodule CyasgWeb.UserRegistrationLive do
   alias Cyasg.Accounts.User
 
   def render(assigns) do
+    # TODO: add password confirmation
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
