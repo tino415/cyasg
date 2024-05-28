@@ -9,7 +9,7 @@ function dev() {
 }
 
 function check() {
-	mix dev.checks
+	mix compile --force && mix format
 }
 
 function format() {

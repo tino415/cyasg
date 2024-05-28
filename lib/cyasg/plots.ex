@@ -1,13 +1,17 @@
 defmodule Cyasg.Plots do
   use Cyasg.Context
 
+  alias Cyasg.Datasets
   alias Cyasg.Plots.Plot
 
   def list_user_plots(user_id) do
     Repo.all(from(p in Plot, where: p.user_id == ^user_id))
   end
 
-  def get_user_plot!(user_id, id), do: Repo.get_by!(Plot, user_id: user_id, id: id)
+  def get_user_plot!(user_id, id) do
+    plot = Repo.get_by!(Plot, user_id: user_id, id: id)
+    %Plot{plot | columns: Datasets.columns(plot.dataset)}
+  end
 
   def create_user_plot(user_id, attrs \\ %{}) do
     %Plot{user_id: user_id}

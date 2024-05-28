@@ -33,6 +33,7 @@ defmodule Cyasg.MixProject do
   defp deps do
     [
       {:bcrypt_elixir, "~> 3.0"},
+      {:decimal, "~> 2.1"},
       {:phoenix, "~> 1.7.12"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -54,6 +55,7 @@ defmodule Cyasg.MixProject do
       {:swoosh, "~> 1.5"},
       {:finch, "~> 0.13"},
       {:nimble_csv, "~> 1.2"},
+      {:nimble_parsec, "~> 1.4"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},

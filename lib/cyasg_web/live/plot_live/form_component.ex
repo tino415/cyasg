@@ -21,8 +21,11 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:dataset]} type="select" label="Dataset" options={Datasets.list()} />
-        <.input field={@form[:expression]} type="select" label="Expression" options={@columns} />
+        <.input field={@form[:dataset]} type="select" label="Dataset" options={@datasets} />
+        <p>
+          <%= "'#{Enum.join(@columns, "','")}'" %>
+        </p>
+        <.input field={@form[:expression]} type="text" label="Expression" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Plot</.button>
         </:actions>
@@ -53,6 +56,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
 
     {:ok,
      socket
+     |> assign(:datasets, Datasets.list())
      |> assign(assigns)
      |> assign_form(changeset)}
   end
@@ -72,7 +76,6 @@ defmodule CyasgWeb.PlotLive.FormComponent do
   end
 
   def handle_event("image-src", src, socket) do
-    IO.inspect(src, label: "prerendered image")
     # FIXME: user could push save sooner than prerendering finishes
     # but it is not as straight forward to do this
     {:noreply, assign(socket, :prerendered_image, src)}
@@ -110,23 +113,20 @@ defmodule CyasgWeb.PlotLive.FormComponent do
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset.errors, label: "error")
         {:noreply, assign_form(socket, changeset)}
     end
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    datasets = Datasets.list()
+    datasets = socket.assigns.datasets
 
     dataset = Ecto.Changeset.get_field(changeset, :dataset) || List.first(datasets)
-    columns = Datasets.columns(dataset)
-    column = Ecto.Changeset.get_field(changeset, :expression) || List.first(columns)
-    column = if column not in columns, do: List.first(columns), else: column
-    datapoints = Datasets.column(dataset, column)
+    expression = Ecto.Changeset.get_field(changeset, :expression)
+    datapoints = Datasets.column(dataset, expression)
 
     socket
     |> assign(:form, to_form(changeset))
-    |> assign(:columns, columns)
+    |> assign(:columns, Ecto.Changeset.get_field(changeset, :columns))
     |> assign(:datapoints, datapoints)
   end
 

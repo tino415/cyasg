@@ -7,7 +7,7 @@ defmodule Cyasg.Repo.Migrations.CreateSharings do
       add :user_id, references(:users, type: :uuid, on_delete: :delete_all), null: false
       add :plot_id, references(:plots, type: :uuid, on_delete: :delete_all), null: false
 
-      timestamps(type: :utc_datetime)
+      timestamps(updated_at: false, type: :utc_datetime)
     end
 
     create index(:sharings, [:user_id])
