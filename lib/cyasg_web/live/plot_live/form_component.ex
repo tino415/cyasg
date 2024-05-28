@@ -76,7 +76,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
     save_plot(socket, socket.assigns.action, plot_params)
   end
 
-  def handle_event("image-src", src, socket) do
+  def handle_event("image-src", %{"src" => src}, socket) do
     # FIXME: user could push save sooner than prerendering finishes
     # but it is not as straight forward to do this
     {:noreply, assign(socket, :prerendered_image, src)}

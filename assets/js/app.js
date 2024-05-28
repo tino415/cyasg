@@ -44,7 +44,7 @@ const Hooks = {
       if (prerender) {
         plot
           .then((gd) => Plotly.toImage(gd, {height: 300, width: 300}))
-          .then((url) => this.pushEventTo(prerender, "image-src", url))
+          .then((url) => this.pushEventTo(prerender, "image-src", %{src: url}))
       }
     }
   }

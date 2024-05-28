@@ -11,12 +11,19 @@ defmodule Cyasg.Datasets do
   def list(), do: @filenames
 
   def columns(dataset_name) do
-    dataset_name
-    |> path()
-    |> File.stream!()
-    |> CSV.parse_stream(skip_headers: false)
-    |> Enum.take(1)
-    |> List.first()
+    file_name = path(dataset_name)
+
+    if File.exists?(file_name) do
+      dataset_name
+      |> path()
+      |> File.stream!()
+      |> CSV.parse_stream(skip_headers: false)
+      |> Enum.take(1)
+      |> List.first()
+    else
+      Logger.error("Unknown dataset #{inspect(file_name)}")
+      []
+    end
   end
 
   def column(dataset_name, expression) do

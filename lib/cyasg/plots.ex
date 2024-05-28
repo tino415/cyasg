@@ -13,6 +13,7 @@ defmodule Cyasg.Plots do
     %Plot{plot | columns: Datasets.columns(plot.dataset)}
   end
 
+  # TODO: make consistent, either send structs or ids everywhere
   def create_user_plot(user_id, attrs \\ %{}) do
     %Plot{user_id: user_id}
     |> Plot.changeset(attrs)

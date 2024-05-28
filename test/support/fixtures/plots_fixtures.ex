@@ -7,15 +7,17 @@ defmodule Cyasg.PlotsFixtures do
   @doc """
   Generate a plot.
   """
-  def plot_fixture(attrs \\ %{}) do
-    {:ok, plot} =
+  def plot_fixture(user, attrs \\ %{}) do
+    attrs =
       attrs
       |> Enum.into(%{
-        dataset: "some dataset",
-        expression: "some expression",
-        name: "some name"
+        dataset: "2011_february_aa_flight_paths",
+        expression: "'start_lat'",
+        name: "some name",
+        prerendered_image: "test:valuie"
       })
-      |> Cyasg.Plots.create_plot()
+
+    {:ok, plot} = Cyasg.Plots.create_user_plot(user.id, attrs)
 
     plot
   end

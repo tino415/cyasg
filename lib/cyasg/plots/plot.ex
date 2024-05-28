@@ -34,16 +34,21 @@ defmodule Cyasg.Plots.Plot do
 
   defp validate_expression(changeset) do
     expression = get_field(changeset, :expression)
-    columns = get_field(changeset, :columns)
 
-    errors =
-      case Expressions.parse(expression, columns) do
-        {:ok, _tags} -> []
-        {:error, messages} -> messages
-      end
+    if is_nil(expression) do
+      changeset
+    else
+      columns = get_field(changeset, :columns)
 
-    Enum.reduce(errors, changeset, fn error, changeset ->
-      add_error(changeset, :expression, error)
-    end)
+      errors =
+        case Expressions.parse(expression, columns) do
+          {:ok, _tags} -> []
+          {:error, messages} -> messages
+        end
+
+      Enum.reduce(errors, changeset, fn error, changeset ->
+        add_error(changeset, :expression, error)
+      end)
+    end
   end
 end

@@ -31,12 +31,6 @@ defmodule Cyasg.Sharings do
     end
   end
 
-  def update_sharing(%Sharing{} = sharing, attrs) do
-    sharing
-    |> Sharing.changeset(attrs)
-    |> Repo.update()
-  end
-
   def delete_sharing(%Sharing{} = sharing) do
     Repo.delete(sharing)
   end

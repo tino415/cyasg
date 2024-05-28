@@ -7,11 +7,10 @@ defmodule Cyasg.SharingsFixtures do
   @doc """
   Generate a sharing.
   """
-  def sharing_fixture(attrs \\ %{}) do
-    {:ok, sharing} =
-      attrs
-      |> Enum.into(%{})
-      |> Cyasg.Sharings.create_sharing()
+  def sharing_fixture(plot, attrs \\ %{}) do
+    attrs = Enum.into(attrs, %{})
+
+    {:ok, sharing} = Cyasg.Sharings.create_plot_sharing(plot, attrs)
 
     sharing
   end
