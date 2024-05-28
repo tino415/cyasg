@@ -3,6 +3,11 @@ defmodule Cyasg.Accounts do
 
   alias Cyasg.Accounts.{User, UserToken, UserNotifier}
 
+  def list_other_users(user_id) do
+    from(u in User, where: u.id != ^user_id)
+    |> Repo.all()
+  end
+
   def get_user_by_email(email) when is_binary(email) do
     Repo.get_by(User, email: email)
   end

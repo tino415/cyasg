@@ -5,6 +5,9 @@
     <.link patch={~p"/plots/#{@plot}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit plot</.button>
     </.link>
+    <.link patch={~p"/plots/#{@plot}/show/share"} phx-click={JS.push_focus()}>
+      <.button>Share plot</.button>
+    </.link>
   </:actions>
 </.header>
 
@@ -35,3 +38,15 @@
     current_user={@current_user}
   />
 </.modal>
+
+<.modal :if={@live_action == :share} id="share-modal" show on_cancel={JS.patch(~p"/plots/#{@plot}")}>
+  <.live_component
+    module={CyasgWeb.PlotLive.ShareComponent}
+    id={"sharing-#{@plot.id}"}
+    title={@page_title}
+    plot={@plot}
+    patch={~p"/plots/#{@plot}"}
+    current_user={@current_user}
+  />
+</.modal>
+

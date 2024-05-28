@@ -1,0 +1,41 @@
+<.header>
+  Listing Sharings
+  <:actions>
+    <.link patch={~p"/sharings/new"}>
+      <.button>New Sharing</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="sharings"
+  rows={@streams.sharings}
+  row_click={fn {_id, sharing} -> JS.navigate(~p"/sharings/#{sharing}") end}
+>
+  <:col :let={{_id, sharing}} label="Name"><%= sharing.plot.name %></:col>
+  <:action :let={{_id, sharing}}>
+    <div class="sr-only">
+      <.link navigate={~p"/sharings/#{sharing}"}>Show</.link>
+    </div>
+    <.link patch={~p"/sharings/#{sharing}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, sharing}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: sharing.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="sharing-modal" show on_cancel={JS.patch(~p"/sharings")}>
+  <.live_component
+    module={CyasgWeb.SharingLive.FormComponent}
+    id={@sharing.id || :new}
+    title={@page_title}
+    action={@live_action}
+    sharing={@sharing}
+    patch={~p"/sharings"}
+  />
+</.modal>

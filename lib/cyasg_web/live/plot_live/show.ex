@@ -24,4 +24,5 @@ defmodule CyasgWeb.PlotLive.Show do
 
   defp page_title(:show), do: "Show Plot"
   defp page_title(:edit), do: "Edit Plot"
+  defp page_title(:share), do: "Share Plot"
 end
