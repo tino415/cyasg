@@ -79,11 +79,7 @@ defmodule CyasgWeb.Router do
       live "/plots/:id/show/share", PlotLive.Show, :share
 
       live "/sharings", SharingLive.Index, :index
-      live "/sharings/new", SharingLive.Index, :new
-      live "/sharings/:id/edit", SharingLive.Index, :edit
-
       live "/sharings/:id", SharingLive.Show, :show
-      live "/sharings/:id/show/edit", SharingLive.Show, :edit
     end
   end
 

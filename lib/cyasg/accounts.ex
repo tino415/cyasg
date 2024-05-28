@@ -15,7 +15,8 @@ defmodule Cyasg.Accounts do
       u in User,
       where: u.id != ^user_id,
       where: u.id not in subquery(already_shared_query),
-      select: {u.email, u.id})
+      select: {u.email, u.id}
+    )
     |> Repo.all()
   end
 

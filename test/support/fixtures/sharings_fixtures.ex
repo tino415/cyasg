@@ -10,9 +10,7 @@ defmodule Cyasg.SharingsFixtures do
   def sharing_fixture(attrs \\ %{}) do
     {:ok, sharing} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> Cyasg.Sharings.create_sharing()
 
     sharing

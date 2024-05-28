@@ -1,13 +1,12 @@
 defmodule Cyasg.Sharings do
-  import Ecto.Query, warn: false
-  alias Cyasg.Repo
+  use Cyasg.Context
 
   alias Cyasg.Sharings.Sharing
-  alias Ecto.Changeset
 
-  def list_sharings do
-    Repo.all(Sharing)
-    |> Repo.preload(:plot)
+  def list_shared_with_user(user_id) do
+    from(s in Sharing, where: s.user_id == ^user_id)
+    |> Repo.all()
+    |> Repo.preload(plot: :user)
   end
 
   def list_plot_sharings(plot_id) do
@@ -16,7 +15,10 @@ defmodule Cyasg.Sharings do
     |> Repo.preload(:user)
   end
 
-  def get_sharing!(id), do: Repo.get!(Sharing, id)
+  def get_sharing!(id) do
+    Repo.get!(Sharing, id)
+    |> Repo.preload(plot: :user)
+  end
 
   def create_plot_sharing(plot, attrs \\ %{}) do
     ok_sharing =

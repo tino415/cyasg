@@ -16,7 +16,7 @@
   <:col :let={{_id, plot}} label="Dataset"><%= plot.dataset %></:col>
   <:col :let={{_id, plot}} label="Expression"><%= plot.expression %></:col>
   <:col :let={{_id, plot}} label="Thumbnail">
-    <img src={plot.prerendered_image} alt={"#{plot.name} plot"}/>
+    <img src={plot.prerendered_image} alt={"#{plot.name} plot"} />
   </:col>
   <:action :let={{_id, plot}}>
     <div class="sr-only">

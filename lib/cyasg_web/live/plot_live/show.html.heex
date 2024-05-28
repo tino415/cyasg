@@ -17,12 +17,18 @@
   <:item title="Expression"><%= @plot.expression %></:item>
 </.list>
 
-<div id="plot" phx-hook="Plotly" data-plotly={Jason.encode!([
-     %{
-       "x" => Enum.into(@datapoints, []),
-       "type" => "histogram"
+<div
+  id="plot"
+  phx-hook="Plotly"
+  data-plotly={
+    Jason.encode!([
+      %{
+        "x" => Enum.into(@datapoints, []),
+        "type" => "histogram"
       }
-     ])}>
+    ])
+  }
+>
 </div>
 
 <.back navigate={~p"/plots"}>Back to plots</.back>
@@ -39,7 +45,12 @@
   />
 </.modal>
 
-<.modal :if={@live_action == :share} id="share-modal" show on_cancel={JS.patch(~p"/plots/#{@plot}")}>
+<.modal
+  :if={@live_action == :share}
+  id="share-modal"
+  show
+  on_cancel={JS.patch(~p"/plots/#{@plot}")}
+>
   <.live_component
     module={CyasgWeb.PlotLive.ShareComponent}
     id={"sharing-#{@plot.id}"}
@@ -49,4 +60,3 @@
     current_user={@current_user}
   />
 </.modal>
-

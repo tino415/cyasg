@@ -35,7 +35,12 @@ defmodule Cyasg.PlotsTest do
 
     test "update_plot/2 with valid data updates the plot" do
       plot = plot_fixture()
-      update_attrs = %{name: "some updated name", dataset: "some updated dataset", expression: "some updated expression"}
+
+      update_attrs = %{
+        name: "some updated name",
+        dataset: "some updated dataset",
+        expression: "some updated expression"
+      }
 
       assert {:ok, %Plot{} = plot} = Plots.update_plot(plot, update_attrs)
       assert plot.name == "some updated name"

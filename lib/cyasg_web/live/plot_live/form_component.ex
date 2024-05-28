@@ -28,18 +28,21 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         </:actions>
       </.simple_form>
 
-      <div id="plot"
+      <div
+        id="plot"
         phx-update="ignore"
         phx-hook="Plotly"
         data-prerender={@myself}
-        data-plotly={Jason.encode!([
-        %{
-          "x" => Enum.into(@datapoints, []),
-          "type" => "histogram"
-         }
-        ])}>
+        data-plotly={
+          Jason.encode!([
+            %{
+              "x" => Enum.into(@datapoints, []),
+              "type" => "histogram"
+            }
+          ])
+        }
+      >
       </div>
-
     </div>
     """
   end

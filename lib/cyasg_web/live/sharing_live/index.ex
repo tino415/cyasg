@@ -6,7 +6,8 @@ defmodule CyasgWeb.SharingLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :sharings, Sharings.list_sharings())}
+    {:ok,
+     stream(socket, :sharings, Sharings.list_shared_with_user(socket.assigns.current_user.id))}
   end
 
   @impl true

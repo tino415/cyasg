@@ -27,10 +27,7 @@ defmodule CyasgWeb.PlotLive.ShareComponent do
         </:actions>
       </.simple_form>
 
-      <.table
-        id="sharings"
-        rows={@streams.sharings}
-      >
+      <.table id="sharings" rows={@streams.sharings}>
         <:col :let={{_id, sharing}} label="User"><%= sharing.user.email %></:col>
         <:action :let={{id, sharing}}>
           <.link

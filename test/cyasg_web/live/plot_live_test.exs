@@ -5,7 +5,11 @@ defmodule CyasgWeb.PlotLiveTest do
   import Cyasg.PlotsFixtures
 
   @create_attrs %{name: "some name", dataset: "some dataset", expression: "some expression"}
-  @update_attrs %{name: "some updated name", dataset: "some updated dataset", expression: "some updated expression"}
+  @update_attrs %{
+    name: "some updated name",
+    dataset: "some updated dataset",
+    expression: "some updated expression"
+  }
   @invalid_attrs %{name: nil, dataset: nil, expression: nil}
 
   defp create_plot(_) do
