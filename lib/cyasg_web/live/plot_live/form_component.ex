@@ -19,6 +19,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        phx-debounce="3000"
       >
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:dataset]} type="select" label="Dataset" options={@datasets} />

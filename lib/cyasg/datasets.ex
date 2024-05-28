@@ -4,50 +4,54 @@ defmodule Cyasg.Datasets do
 
   require Logger
 
-  @filenames Path.wildcard("#{File.cwd!()}/datasets/**/*.csv")
-             |> Enum.map(&String.replace_prefix(&1, "#{File.cwd!()}/datasets/", ""))
-             |> Enum.map(&String.replace_suffix(&1, ".csv", ""))
+  def list() do
+    File.read!("#{File.cwd!()}/datasets.json")
+    |> Jason.decode!()
+    |> Map.keys()
+  end
 
-  def list(), do: @filenames
-
-  def columns(dataset_name) do
-    file_name = path(dataset_name)
-
-    if File.exists?(file_name) do
-      dataset_name
-      |> path()
-      |> File.stream!()
-      |> CSV.parse_stream(skip_headers: false)
-      |> Enum.take(1)
-      |> List.first()
-    else
-      Logger.error("Unknown dataset #{inspect(file_name)}")
-      []
-    end
+  def columns(name) do
+    File.read!("#{File.cwd!()}/datasets.json")
+    |> Jason.decode!()
+    |> Map.get(name, [])
   end
 
   def column(dataset_name, expression) do
-    stream =
-      dataset_name
-      |> path()
-      |> File.stream!()
-      |> CSV.parse_stream(skip_headers: false)
+    dataset_url = url(dataset_name)
+    request = Finch.build(:get, dataset_url)
+    {:ok, result} = Finch.request(request, Cyasg.Finch)
+    [columns | rows] = CSV.parse_string(result.body, skip_headers: false)
 
-    columns =
-      stream
-      |> Enum.take(1)
-      |> List.first()
-
-    stream
-    |> Stream.drop(1)
-    |> Stream.map(&Expressions.evaluate!(expression, columns, &1))
-    # eager evaluation = simpler debugging
-    |> Enum.into([])
+    Enum.map(rows, & Expressions.evaluate!(expression, columns, &1))
   rescue
     error ->
       Logger.error("Unable to evaluate datapoints #{inspect(error)}")
       []
   end
 
-  def path(dataset_name), do: "#{File.cwd!()}/datasets/#{dataset_name}.csv"
+  def url(dataset_name), do: "https://raw.githubusercontent.com/plotly/datasets/master/#{dataset_name}.csv"
+
+  def generate_index() do
+    index =
+      Enum.reduce(Path.wildcard("#{File.cwd!()}/datasets/**/*.csv"), %{}, fn file, index ->
+        try do
+          name =
+            file
+            |> String.replace_prefix("#{File.cwd!()}/datasets/", "")
+            |> String.replace_suffix(".csv", "")
+
+          columns =
+            File.stream!(file)
+            |> CSV.parse_stream(skip_headers: false)
+            |> Enum.take(1)
+            |> List.first()
+
+          Map.put(index, name, columns)
+        rescue
+          _ -> index
+        end
+      end)
+
+    File.write!("#{File.cwd!()}/datasets.json", Jason.encode!(index))
+  end
 end
