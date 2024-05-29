@@ -22,7 +22,7 @@ defmodule Cyasg.Plots.Plot do
   def changeset(plot, attrs) do
     plot
     |> cast(attrs, [:name, :dataset, :expression, :prerendered_image])
-    |> validate_required([:name, :dataset, :expression, :prerendered_image])
+    |> validate_required([:name, :dataset, :expression])
     |> preload_columns()
     |> validate_expression()
   end
