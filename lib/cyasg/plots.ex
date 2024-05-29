@@ -14,15 +14,15 @@ defmodule Cyasg.Plots do
   end
 
   # TODO: make consistent, either send structs or ids everywhere
-  def create_user_plot(user_id, attrs \\ %{}) do
+  def create_user_plot(user_id, datapoints, attrs \\ %{}) do
     %Plot{user_id: user_id}
-    |> Plot.changeset(attrs)
+    |> Plot.changeset(datapoints, attrs)
     |> Repo.insert()
   end
 
-  def update_user_plot(user_id, %Plot{user_id: user_id} = plot, attrs) do
+  def update_user_plot(user_id, %Plot{user_id: user_id} = plot, datapoints, attrs) do
     plot
-    |> Plot.changeset(attrs)
+    |> Plot.changeset(datapoints, attrs)
     |> Repo.update()
   end
 
@@ -31,6 +31,6 @@ defmodule Cyasg.Plots do
   end
 
   def change_plot(%Plot{} = plot, attrs \\ %{}) do
-    Plot.changeset(plot, attrs)
+    Plot.changeset(plot, plot.datapoints, attrs)
   end
 end

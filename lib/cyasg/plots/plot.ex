@@ -12,6 +12,7 @@ defmodule Cyasg.Plots.Plot do
     field :prerendered_image, :string
 
     field :columns, {:array, :string}, virtual: true
+    field :datapoints, {:array, :decimal}, default: []
 
     belongs_to :user, User, type: :binary_id
 
@@ -19,9 +20,10 @@ defmodule Cyasg.Plots.Plot do
   end
 
   @doc false
-  def changeset(plot, attrs) do
+  def changeset(plot, datapoints, attrs) do
     plot
     |> cast(attrs, [:name, :dataset, :expression, :prerendered_image])
+    |> put_change(:datapoints, datapoints)
     |> validate_required([:name, :dataset, :expression])
     |> preload_columns()
     |> validate_expression()

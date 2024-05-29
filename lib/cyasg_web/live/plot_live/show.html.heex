@@ -23,7 +23,7 @@
   data-plotly={
     Jason.encode!([
       %{
-        "x" => Enum.into(@datapoints, []),
+        "x" => @plot.datapoints,
         "type" => "histogram"
       }
     ])

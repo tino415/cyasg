@@ -91,7 +91,12 @@ defmodule CyasgWeb.PlotLive.FormComponent do
     user_id = socket.assigns.current_user.id
     plot_params = Map.put(plot_params, "prerendered_image", socket.assigns.prerendered_image)
 
-    case Plots.update_user_plot(user_id, socket.assigns.plot, plot_params) do
+    case Plots.update_user_plot(
+           user_id,
+           socket.assigns.plot,
+           socket.assigns.datapoints,
+           plot_params
+         ) do
       {:ok, plot} ->
         notify_parent({:saved, plot})
 
@@ -109,7 +114,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
     user_id = socket.assigns.current_user.id
     plot_params = Map.put(plot_params, "prerendered_image", socket.assigns.prerendered_image)
 
-    case Plots.create_user_plot(user_id, plot_params) do
+    case Plots.create_user_plot(user_id, socket.assigns.datapoints, plot_params) do
       {:ok, plot} ->
         notify_parent({:saved, plot})
 
