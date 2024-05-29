@@ -22,14 +22,15 @@ defmodule Cyasg.Datasets do
     {:ok, result} = Finch.request(request, Cyasg.Finch)
     [columns | rows] = CSV.parse_string(result.body, skip_headers: false)
 
-    Enum.map(rows, & Expressions.evaluate!(expression, columns, &1))
+    Enum.map(rows, &Expressions.evaluate!(expression, columns, &1))
   rescue
     error ->
       Logger.error("Unable to evaluate datapoints #{inspect(error)}")
       []
   end
 
-  def url(dataset_name), do: "https://raw.githubusercontent.com/plotly/datasets/master/#{dataset_name}.csv"
+  def url(dataset_name),
+    do: "https://raw.githubusercontent.com/plotly/datasets/master/#{dataset_name}.csv"
 
   def generate_index() do
     index =

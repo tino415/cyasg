@@ -19,7 +19,6 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        phx-debounce="3000"
       >
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:dataset]} type="select" label="Dataset" options={@datasets} />
@@ -32,7 +31,12 @@ defmodule CyasgWeb.PlotLive.FormComponent do
         </:actions>
       </.simple_form>
 
+      <div :if={not @changeset.valid?} class="flex justify-center items-center">
+        <.spinner />
+      </div>
+
       <div
+        :if={@changeset.valid?}
         id="plot"
         phx-update="ignore"
         phx-hook="Plotly"
@@ -124,10 +128,20 @@ defmodule CyasgWeb.PlotLive.FormComponent do
 
     dataset = Ecto.Changeset.get_field(changeset, :dataset) || List.first(datasets)
     expression = Ecto.Changeset.get_field(changeset, :expression)
-    datapoints = Datasets.column(dataset, expression)
+
+    datapoints =
+      cond do
+        not changeset.valid? -> []
+        Map.get(socket.assigns, :dataset) != dataset -> Datasets.column(dataset, expression)
+        Map.get(socket.assigns, :expression) != expression -> Datasets.column(dataset, expression)
+        true -> []
+      end
 
     socket
     |> assign(:form, to_form(changeset))
+    |> assign(:dataset, dataset)
+    |> assign(:expression, expression)
+    |> assign(:changeset, changeset)
     |> assign(:columns, Ecto.Changeset.get_field(changeset, :columns))
     |> assign(:datapoints, datapoints)
   end
