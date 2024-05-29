@@ -23,7 +23,7 @@ defmodule Cyasg.PlotsTest do
       assert Plots.get_user_plot!(user.id, plot.id) == plot
     end
 
-    test "create_user_plot/2 with valid data creates a plot" do
+    test "create_user_plot/3 with valid data creates a plot" do
       user = user_fixture()
 
       valid_attrs = %{
@@ -33,18 +33,18 @@ defmodule Cyasg.PlotsTest do
         prerendered_image: "test"
       }
 
-      assert {:ok, %Plot{} = plot} = Plots.create_user_plot(user.id, valid_attrs)
+      assert {:ok, %Plot{} = plot} = Plots.create_user_plot(user.id, [], valid_attrs)
       assert plot.name == "some name"
       assert plot.dataset == "2011_february_aa_flight_paths"
       assert plot.expression == "'start_lat'"
     end
 
-    test "create_user_plot/2 with invalid data returns error changeset" do
+    test "create_user_plot/3 with invalid data returns error changeset" do
       user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Plots.create_user_plot(user, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Plots.create_user_plot(user, [], @invalid_attrs)
     end
 
-    test "update_user_plot/2 with valid data updates the plot" do
+    test "update_user_plot/4 with valid data updates the plot" do
       user = user_fixture()
       plot = plot_fixture(user)
 
@@ -54,17 +54,17 @@ defmodule Cyasg.PlotsTest do
         expression: "'start_lat'"
       }
 
-      assert {:ok, %Plot{} = plot} = Plots.update_user_plot(user.id, plot, update_attrs)
+      assert {:ok, %Plot{} = plot} = Plots.update_user_plot(user.id, plot, [], update_attrs)
       assert plot.name == "some updated name"
       assert plot.dataset == "2011_february_aa_flight_paths"
       assert plot.expression == "'start_lat'"
     end
 
-    test "update_user_plot/3 with invalid data returns error changeset" do
+    test "update_user_plot/4 with invalid data returns error changeset" do
       user = user_fixture()
       plot = plot_fixture(user)
 
-      assert {:error, %Ecto.Changeset{}} = Plots.update_user_plot(user.id, plot, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Plots.update_user_plot(user.id, plot, [], @invalid_attrs)
       assert plot == Plots.get_user_plot!(user.id, plot.id)
     end
 

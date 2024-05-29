@@ -12,12 +12,33 @@
   rows={@streams.plots}
   row_click={fn {_id, plot} -> JS.navigate(~p"/plots/#{plot}") end}
 >
-  <:col :let={{_id, plot}} label="Name"><%= plot.name %></:col>
-  <:col :let={{_id, plot}} label="Dataset"><%= plot.dataset %></:col>
-  <:col :let={{_id, plot}} label="Expression"><%= plot.expression %></:col>
   <:col :let={{_id, plot}} label="Thumbnail">
-    <img src={plot.prerendered_image} alt={"#{plot.name} plot"} />
+    <div id="what?" style="height: 500px; width: 500px;">
+      <div
+        id="plot"
+        phx-hook="Plotly"
+        data-plotly={
+          Jason.encode!([
+            %{
+              "x" => plot.datapoints,
+              "type" => "histogram",
+              "width" => 100,
+              "height" => 100
+            }
+          ])
+        }
+      >
+      </div>
+    </div>
   </:col>
+
+  <:col :let={{_id, plot}} label="Name"><%= plot.name %></:col>
+  <:col :let={{_id, plot}} label="Dataset">
+    <div style="width: 50px; word-break: break-all">
+      <%= plot.dataset %>
+    </div>
+  </:col>
+  <:col :let={{_id, plot}} label="Expression"><%= plot.expression %></:col>
   <:action :let={{_id, plot}}>
     <div class="sr-only">
       <.link navigate={~p"/plots/#{plot}"}>Show</.link>

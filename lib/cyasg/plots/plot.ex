@@ -9,7 +9,6 @@ defmodule Cyasg.Plots.Plot do
     field :name, :string
     field :dataset, :string
     field :expression, :string
-    field :prerendered_image, :string
 
     field :columns, {:array, :string}, virtual: true
     field :datapoints, {:array, :decimal}, default: []
@@ -22,7 +21,7 @@ defmodule Cyasg.Plots.Plot do
   @doc false
   def changeset(plot, datapoints, attrs) do
     plot
-    |> cast(attrs, [:name, :dataset, :expression, :prerendered_image])
+    |> cast(attrs, [:name, :dataset, :expression])
     |> put_change(:datapoints, datapoints)
     |> validate_required([:name, :dataset, :expression])
     |> preload_columns()

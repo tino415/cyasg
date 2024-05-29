@@ -13,11 +13,10 @@ defmodule Cyasg.PlotsFixtures do
       |> Enum.into(%{
         dataset: "2011_february_aa_flight_paths",
         expression: "'start_lat'",
-        name: "some name",
-        prerendered_image: "test:valuie"
+        name: "some name"
       })
 
-    {:ok, plot} = Cyasg.Plots.create_user_plot(user.id, attrs)
+    {:ok, plot} = Cyasg.Plots.create_user_plot(user.id, [], attrs)
 
     plot
   end
