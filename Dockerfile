@@ -53,8 +53,6 @@ COPY priv priv
 
 COPY lib lib
 
-COPY datasets/*.csv datasets/
-
 COPY assets assets
 
 RUN cd assets && yarn install && cd ..
@@ -94,7 +92,7 @@ ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/cyasg ./
-COPY --from=builder --chown=nobody:root /app/datasets ./bin/datasets
+COPY --chown=nobody:root datasets.json ./bin/datasets.json
 
 USER nobody
 
