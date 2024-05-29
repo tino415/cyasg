@@ -34,20 +34,27 @@ defmodule Cyasg.Datasets do
 
   def generate_index() do
     index =
-      Enum.reduce(Path.wildcard("#{File.cwd!()}/datasets/**/*.csv"), %{}, fn file, index ->
+      Path.wildcard("#{File.cwd!()}/datasets/**/*.csv")
+      |> Enum.reduce(%{}, fn file_path, index ->
         try do
           name =
-            file
+            file_path
             |> String.replace_prefix("#{File.cwd!()}/datasets/", "")
             |> String.replace_suffix(".csv", "")
 
           columns =
-            File.stream!(file)
+            File.stream!(file_path)
             |> CSV.parse_stream(skip_headers: false)
             |> Enum.take(1)
             |> List.first()
 
-          Map.put(index, name, columns)
+          # some csv are wrongly formatted, end up putting all rows in
+          # to the index
+          if byte_size(:erlang.term_to_binary(columns)) > 1000 do
+            index
+          else
+            Map.put(index, name, columns)
+          end
         rescue
           _ -> index
         end
