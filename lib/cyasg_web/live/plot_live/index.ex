@@ -7,6 +7,7 @@ defmodule CyasgWeb.PlotLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     user_id = socket.assigns.current_user.id
+    # TODO: use user specific topic
     CyasgWeb.Endpoint.subscribe("plots")
     {:ok, stream(socket, :plots, Plots.list_user_plots(user_id))}
   end

@@ -89,6 +89,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
            plot_params
          ) do
       {:ok, plot} ->
+        # TODO: use user specific topic, also send to sharings
         CyasgWeb.Endpoint.broadcast("plots", "saved", plot)
 
         {:noreply,
