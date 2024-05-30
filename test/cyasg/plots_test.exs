@@ -64,7 +64,9 @@ defmodule Cyasg.PlotsTest do
       user = user_fixture()
       plot = plot_fixture(user)
 
-      assert {:error, %Ecto.Changeset{}} = Plots.update_user_plot(user.id, plot, [], @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} =
+               Plots.update_user_plot(user.id, plot, [], @invalid_attrs)
+
       assert plot == Plots.get_user_plot!(user.id, plot.id)
     end
 
