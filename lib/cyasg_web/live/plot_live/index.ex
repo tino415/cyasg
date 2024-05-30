@@ -7,6 +7,7 @@ defmodule CyasgWeb.PlotLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     user_id = socket.assigns.current_user.id
+    CyasgWeb.Endpoint.subscribe("plots")
     {:ok, stream(socket, :plots, Plots.list_user_plots(user_id))}
   end
 
@@ -36,7 +37,7 @@ defmodule CyasgWeb.PlotLive.Index do
   end
 
   @impl true
-  def handle_info({CyasgWeb.PlotLive.FormComponent, {:saved, plot}}, socket) do
+  def handle_info(%{event: "saved", payload: plot}, socket) do
     {:noreply, stream_insert(socket, :plots, plot)}
   end
 

@@ -89,7 +89,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
            plot_params
          ) do
       {:ok, plot} ->
-        notify_parent({:saved, plot})
+        CyasgWeb.Endpoint.broadcast("plots", "saved", plot)
 
         {:noreply,
          socket
@@ -106,7 +106,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
 
     case Plots.create_user_plot(user_id, socket.assigns.datapoints, plot_params) do
       {:ok, plot} ->
-        notify_parent({:saved, plot})
+        CyasgWeb.Endpoint.broadcast("plots", "saved", plot)
 
         {:noreply,
          socket
@@ -140,6 +140,4 @@ defmodule CyasgWeb.PlotLive.FormComponent do
     |> assign(:columns, Ecto.Changeset.get_field(changeset, :columns))
     |> assign(:datapoints, datapoints)
   end
-
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end
