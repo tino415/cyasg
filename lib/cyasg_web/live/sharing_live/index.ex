@@ -3,9 +3,14 @@ defmodule CyasgWeb.SharingLive.Index do
 
   alias Cyasg.Sharings
   alias Cyasg.Sharings.Sharing
+  alias CyasgWeb.Endpoint
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Endpoint.subscribe("sharing-#{socket.assigns.current_user.id}")
+    end
+
     {:ok,
      stream(socket, :sharings, Sharings.list_shared_with_user(socket.assigns.current_user.id))}
   end

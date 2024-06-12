@@ -90,7 +90,11 @@ defmodule CyasgWeb.PlotLive.FormComponent do
          ) do
       {:ok, plot} ->
         # TODO: use user specific topic, also send to sharings
-        CyasgWeb.Endpoint.broadcast("plots", "saved", plot)
+        CyasgWeb.Endpoint.broadcast("plots-#{user_id}", "saved", plot)
+
+        Enum.each(plot.sharings, fn s ->
+          CyasgWeb.Endpoint.broadcast("sharing-#{s.user_id}", "saved", plot)
+        end)
 
         {:noreply,
          socket
@@ -107,7 +111,7 @@ defmodule CyasgWeb.PlotLive.FormComponent do
 
     case Plots.create_user_plot(user_id, socket.assigns.datapoints, plot_params) do
       {:ok, plot} ->
-        CyasgWeb.Endpoint.broadcast("plots", "saved", plot)
+        CyasgWeb.Endpoint.broadcast("plots-#{user_id}", "saved", plot)
 
         {:noreply,
          socket

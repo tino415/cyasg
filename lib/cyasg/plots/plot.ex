@@ -4,6 +4,7 @@ defmodule Cyasg.Plots.Plot do
   alias Cyasg.Datasets
   alias Cyasg.Expressions
   alias Cyasg.Accounts.User
+  alias Cyasg.Sharings.Sharing
 
   schema "plots" do
     field :name, :string
@@ -14,6 +15,7 @@ defmodule Cyasg.Plots.Plot do
     field :datapoints, {:array, :decimal}, default: []
 
     belongs_to :user, User, type: :binary_id
+    has_many :sharings, Sharing
 
     timestamps(type: :utc_datetime)
   end

@@ -14,13 +14,14 @@ defmodule Cyasg.PlotsTest do
     test "list_user_plots/1 returns all users plots" do
       user = user_fixture()
       plot = plot_fixture(user)
-      assert Plots.list_user_plots(user.id) == [Map.put(plot, :columns, nil)]
+      assert [new_plot] = Plots.list_user_plots(user.id)
+      assert new_plot.id == plot.id
     end
 
     test "get_user_plot!/2 returns the plot with given id" do
       user = user_fixture()
       plot = plot_fixture(user)
-      assert Plots.get_user_plot!(user.id, plot.id) == plot
+      assert Plots.get_user_plot!(user.id, plot.id).id == plot.id
     end
 
     test "create_user_plot/3 with valid data creates a plot" do
@@ -67,7 +68,7 @@ defmodule Cyasg.PlotsTest do
       assert {:error, %Ecto.Changeset{}} =
                Plots.update_user_plot(user.id, plot, [], @invalid_attrs)
 
-      assert plot == Plots.get_user_plot!(user.id, plot.id)
+      assert plot.name == Plots.get_user_plot!(user.id, plot.id).name
     end
 
     test "delete_user_plot/2 deletes the plot" do
